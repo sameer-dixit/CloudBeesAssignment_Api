@@ -1,0 +1,120 @@
+package api_assignment;
+
+//import java.util.ArrayList;
+import java.util.HashMap;
+//import java.util.List;
+import java.util.Map;
+//import java.util.Scanner;
+
+
+public class TicketApi {
+	
+    private static Map<User, Seat> userSeatMap = new HashMap<>();
+
+    public static String submitPurchase(String from, String to, String firstName, String lastName, String email, double pricePaid, String section) {
+        User user = new User(firstName, lastName, email);
+        Purchase purchase = new Purchase(from, to, user, pricePaid);
+
+        // Allocate a seat for the user in the specified section
+        Seat seat = allocateSeat(section);
+        userSeatMap.put(user, seat);
+
+        return generateReceipt(purchase, seat);
+    }
+
+    private static String generateReceipt(Purchase purchase, Seat seat) {
+        StringBuilder receipt = new StringBuilder();
+        receipt.append("Receipt Details:\n");
+        receipt.append("From: ").append(purchase.getFrom()).append("\n");
+        receipt.append("To: ").append(purchase.getTo()).append("\n");
+        receipt.append("User: ").append(purchase.getUser().getFullName()).append("\n");
+        receipt.append("Email: ").append(purchase.getUser().getEmail()).append("\n");
+        receipt.append("Price Paid: $").append(purchase.getPricePaid()).append("\n");
+        receipt.append("Seat Section: ").append(seat.getSection()).append("\n");
+        receipt.append("Seat Number: ").append(seat.getNumber()).append("\n");
+        receipt.append("Purchase Date: ").append(purchase.getPurchaseDate()).append("\n");
+
+        return receipt.toString();
+    }
+
+    public static void viewUsersAndSeats(String section) {
+        System.out.println("Users and Seats in Section " + section + ":\n");
+        for (Map.Entry<User, Seat> entry : userSeatMap.entrySet()) {
+            User user = entry.getKey();
+            Seat seat = entry.getValue();
+            if (seat.getSection().equals(section)) {
+                System.out.println("User: " + user.getFullName() + ", Seat: " + seat.getNumber());
+            }
+        }
+        System.out.println();
+    }
+
+    public static void removeUser(User user) {
+        if (userSeatMap.containsKey(user)) {
+            Seat seat = userSeatMap.get(user);
+            System.out.println("Removing user " + user.getFullName() + " from Seat " + seat.getNumber());
+            userSeatMap.remove(user);
+        } else {
+            System.out.println("User not found in the system.");
+        }
+    }
+
+    public static void modifyUserSeat(User user, String newSection, int newSeatNumber) {
+        if (userSeatMap.containsKey(user)) {
+            Seat oldSeat = userSeatMap.get(user);
+            Seat newSeat = new Seat(newSection, newSeatNumber);
+            userSeatMap.put(user, newSeat);
+
+            System.out.println("Modifying user " + user.getFullName() + "'s seat from " +
+                    oldSeat.getSection() + " " + oldSeat.getNumber() + " to " +
+                    newSeat.getSection() + " " + newSeat.getNumber());
+        } else {
+            System.out.println("User not found in the system.");
+        }
+    }
+    
+ // Simplified seat allocation logic
+    private static Seat allocateSeat(String section) {
+        
+        int nextSeatNumber = userSeatMap.size() + 1;
+        return new Seat(section, nextSeatNumber);
+    }
+    
+    
+
+    public static void main(String[] args) {
+//    	Scanner scanner = new Scanner(System.in);
+        String receipt = submitPurchase("City A", "City B", "John", "Doe", "john.doe@example.com", 50.00, "Section A");
+        System.out.println(receipt);
+
+        viewUsersAndSeats("Section A");
+
+        User userToRemove = new User("John", "Doe", "john.doe@example.com");
+        removeUser(userToRemove);
+
+        viewUsersAndSeats("Section A");
+
+        User userToModify = new User("John", "Doe", "john.doe@example.com");
+        modifyUserSeat(userToModify, "Section B", 3);
+
+        viewUsersAndSeats("Section B");
+    }
+}
+
+class Seat {
+    private String section;
+    private int number;
+
+    public Seat(String section, int number) {
+        this.section = section;
+        this.number = number;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+}

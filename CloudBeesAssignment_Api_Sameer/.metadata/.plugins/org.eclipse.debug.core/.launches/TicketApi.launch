@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+    <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+        <listEntry value="/api_assignment/src/api_assignment/TicketApi.java"/>
+    </listAttribute>
+    <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+        <listEntry value="1"/>
+    </listAttribute>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_EXCLUDE_TEST_CODE" value="true"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="api_assignment.TicketApi"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="api_assignment"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="api_assignment"/>
+</launchConfiguration>

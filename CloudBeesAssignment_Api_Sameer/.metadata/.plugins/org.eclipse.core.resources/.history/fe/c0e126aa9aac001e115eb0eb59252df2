@@ -1,0 +1,27 @@
+package api_assignment;
+
+public class TicketApi {
+    public static String submitPurchase(String from, String to, String firstName, String lastName, String email, double pricePaid) {
+        User user = new User(firstName, lastName, email);
+        Purchase purchase = new Purchase(from, to, user, pricePaid);
+        return generateReceipt(purchase);
+    }
+
+    private static String generateReceipt(Purchase purchase) {
+        StringBuilder receipt = new StringBuilder();
+        receipt.append("Receipt Details:\n");
+        receipt.append("From: ").append(purchase.getFrom()).append("\n");
+        receipt.append("To: ").append(purchase.getTo()).append("\n");
+        receipt.append("User: ").append(purchase.getUser().getFullName()).append("\n");
+        receipt.append("Email: ").append(purchase.getUser().getEmail()).append("\n");
+        receipt.append("Price Paid: $").append(purchase.getPricePaid()).append("\n");
+        receipt.append("Purchase Date: ").append(purchase.getPurchaseDate()).append("\n");
+
+        return receipt.toString();
+    }
+
+    public static void main(String[] args) {
+        String receipt = submitPurchase("City A", "City B", "John", "Doe", "john.doe@example.com", 50.00);
+        System.out.println(receipt);
+    }
+}

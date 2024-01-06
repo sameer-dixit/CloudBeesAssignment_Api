@@ -1,0 +1,91 @@
+package api_assignment;
+
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
+import io.grpc.stub.StreamObserver;
+
+// Define the gRPC service
+public class TrainService extends TrainGrpc.TrainImplBase {
+    private Map<String, Ticket> tickets = new HashMap<>();
+
+    // API to submit a purchase for a ticket
+    @Override
+    public void purchaseTicket(PurchaseRequest request, StreamObserver<Receipt> responseObserver) {
+        String userId = request.getUser().getFirstName() + request.getUser().getLastName();
+        String seat = allocateSeat(request.getSection());
+        double price = 20.0; // Fixed ticket price
+
+        // Create a ticket and store it
+        Ticket ticket = new Ticket(request.getFrom(), request.getTo(), request.getUser(), seat, price);
+        tickets.put(userId, ticket);
+
+        // Create and send the receipt
+        Receipt receipt = Receipt.newBuilder()
+                .setFrom(request.getFrom())
+                .setTo(request.getTo())
+                .setUser(request.getUser())
+                .setPricePaid(price)
+                .build();
+
+        responseObserver.onNext(receipt);
+        responseObserver.onCompleted();
+    }
+
+    // API to view the details of the receipt for a user
+    @Override
+    public void getReceipt(UserRequest request, StreamObserver<Receipt> responseObserver) {
+        String userId = request.getFirstName() + request.getLastName();
+        Ticket ticket = tickets.get(userId);
+
+        if (ticket != null) {
+            Receipt receipt = Receipt.newBuilder()
+                    .setFrom(ticket.getFrom())
+                    .setTo(ticket.getTo())
+                    .setUser(ticket.getUser())
+                    .setPricePaid(ticket.getPrice())
+                    .build();
+
+            responseObserver.onNext(receipt);
+        } else {
+            responseObserver.onError(Status.NOT_FOUND.withDescription("Ticket not found").asRuntimeException());
+        }
+
+        responseObserver.onCompleted();
+    }
+
+    // API to view the users and seat they are allocated by the requested section
+    @Override
+    public void getAllocations(SectionRequest request, StreamObserver<Allocation> responseObserver) {
+        // Implement logic to retrieve allocations for the requested section
+    }
+
+    // API to remove a user from the train
+    @Override
+    public void removeUser(UserRequest request, StreamObserver<Empty> responseObserver) {
+        // Implement logic to remove the user from the train
+    }
+
+    // API to modify a user's seat
+    @Override
+    public void modifySeat(SeatModificationRequest request, StreamObserver<Empty> responseObserver) {
+        // Implement logic to modify the user's seat
+    }
+
+    // Method to allocate a seat in the specified section
+    private String allocateSeat(String section) {
+        // Implement logic to allocate a seat in the specified section
+    }
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        Server server = ServerBuilder.forPort(50051)
+                .addService(new TrainService())
+                .build();
+
+        server.start();
+
+        System.out.println("Server started on port " + server.getPort());
+
+        server.awaitTermination();
+    }
+}
+
