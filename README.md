@@ -100,6 +100,4 @@ User's seat modified successfully.
 
 View Users and Seats in Section Section A (After Modification):
 
-Feel free to customize this README template based on your specific project details.
-
 
